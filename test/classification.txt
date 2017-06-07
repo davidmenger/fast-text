@@ -1,0 +1,2 @@
+__label__helloLabel this is how it works
+__label__noLabel this should not work
