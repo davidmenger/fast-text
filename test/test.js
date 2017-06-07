@@ -25,7 +25,7 @@ describe('<Classifier>', function () {
                 assert.equal(typeof v, 'object');
                 assert.equal(v.label, '__label__helloLabel');
                 assert.equal(typeof v.value, 'number');
-            })
+            });
             done();
         });
     });
@@ -42,19 +42,19 @@ describe('<Query>', function () {
 
         const c = new Query(model);
 
-        c.nn('sale', 4, (err, res) => {
+        c.nn('wozniak', 2, (err, res) => {
             if (err) {
                 done(err);
                 return;
             }
             assert.equal(Array.isArray(res), true, 'res should be an array');
-            assert.strictEqual(res.length, 4);
+            assert.strictEqual(res.length, 2);
             res.forEach((v) => {
                 assert.equal(typeof v, 'object');
                 assert.equal(typeof v.label, 'string');
                 assert.equal(typeof v.value, 'number');
             })
-            done();
+            done();;
         });
     });
 });

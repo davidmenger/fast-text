@@ -1,7 +1,7 @@
 {
   "name": "fast-text",
-  "version": "0.0.1",
-  "description": "Facebook FastText wrapper for Noder",
+  "version": "0.0.2",
+  "description": "Facebook FastText wrapper for Node.js",
   "main": "main.js",
   "scripts": {
     "test": "mocha --opts ./mocha.opts ./test"
