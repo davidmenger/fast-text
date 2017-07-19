@@ -8,6 +8,7 @@
 #include <atomic>
 #include <memory>
 #include <set>
+#include  <mutex>
 
 #include "../lib/src/fasttext.h"
 

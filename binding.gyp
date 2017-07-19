@@ -32,19 +32,19 @@
             "include_dirs": ["<!(node -e \"require('nan')\")"],
             "cflags": [
                 "-std=c++11",
-                "-stdlib=libc++",
                 "-pthread",
                 "-Wsign-compare",
-                "-fno-exceptions",
+                "-fexceptions",
                 "-O0"
             ],
             "conditions": [
                 [ 'OS!="win"', {
-                    "cflags+": [ "-std=c++11" ],
-                    "cflags_c+": [ "-std=c++11" ],
-                    "cflags_cc+": [ "-std=c++11" ],
+                    "cflags+": [ "-std=c++11", "-fexceptions" ],
+                    "cflags_c+": [ "-std=c++11", "-fexceptions" ],
+                    "cflags_cc+": [ "-std=c++11", "-fexceptions" ],
                 }],
                 [ 'OS=="mac"', {
+                    "cflags+": [ "-stdlib=libc++" ],
                     "xcode_settings": {
                         "OTHER_CPLUSPLUSFLAGS" : [ "-std=c++11", "-stdlib=libc++", "-pthread" ],
                         "OTHER_LDFLAGS": [ "-stdlib=libc++" ],
