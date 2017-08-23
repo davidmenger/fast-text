@@ -11,7 +11,6 @@
 
 #include <algorithm>
 #include <iostream>
-#include <numeric>
 
 namespace fasttext {
 

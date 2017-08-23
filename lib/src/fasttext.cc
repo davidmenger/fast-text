@@ -19,15 +19,14 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
-#include <numeric>
 
 
 namespace fasttext {
 
 FastText::FastText() : quant_(false) {}
 
-void FastText::getVector(Vector& vec, const std::string& word) {
-  const std::vector<int32_t>& ngrams = dict_->getNgrams(word);
+void FastText::getVector(Vector& vec, const std::string& word) const {
+  const std::vector<int32_t>& ngrams = dict_->getSubwords(word);
   vec.zero();
   for (auto it = ngrams.begin(); it != ngrams.end(); ++it) {
     vec.addRow(*input_, *it);
@@ -233,6 +232,7 @@ void FastText::quantize(std::shared_ptr<Args> qargs) {
       args_->lr = qargs->lr;
       args_->thread = qargs->thread;
       args_->verbose = qargs->verbose;
+      start = clock();
       tokenCount = 0;
       std::vector<std::thread> threads;
       for (int32_t i = 0; i < args_->thread; i++) {
@@ -272,7 +272,7 @@ void FastText::cbow(Model& model, real lr,
     bow.clear();
     for (int32_t c = -boundary; c <= boundary; c++) {
       if (c != 0 && w + c >= 0 && w + c < line.size()) {
-        const std::vector<int32_t>& ngrams = dict_->getNgrams(line[w + c]);
+        const std::vector<int32_t>& ngrams = dict_->getSubwords(line[w + c]);
         bow.insert(bow.end(), ngrams.cbegin(), ngrams.cend());
       }
     }
@@ -285,7 +285,7 @@ void FastText::skipgram(Model& model, real lr,
   std::uniform_int_distribution<> uniform(1, args_->ws);
   for (int32_t w = 0; w < line.size(); w++) {
     int32_t boundary = uniform(model.rng);
-    const std::vector<int32_t>& ngrams = dict_->getNgrams(line[w]);
+    const std::vector<int32_t>& ngrams = dict_->getSubwords(line[w]);
     for (int32_t c = -boundary; c <= boundary; c++) {
       if (c != 0 && w + c >= 0 && w + c < line.size()) {
         model.update(ngrams, line[w + c], lr);
@@ -323,13 +323,13 @@ void FastText::test(std::istream& in, int32_t k) {
 void FastText::predict(std::istream& in, int32_t k,
                        std::vector<std::pair<real,std::string>>& predictions) const {
   std::vector<int32_t> words, labels;
+  predictions.clear();
   dict_->getLine(in, words, labels, model_->rng);
   if (words.empty()) return;
   Vector hidden(args_->dim);
   Vector output(dict_->nlabels());
   std::vector<std::pair<real,int32_t>> modelPredictions;
   model_->predict(words, k, modelPredictions, hidden, output);
-  predictions.clear();
   for (auto it = modelPredictions.cbegin(); it != modelPredictions.cend(); it++) {
     predictions.push_back(std::make_pair(it->first, dict_->getLabel(it->second)));
   }
@@ -376,11 +376,16 @@ void FastText::sentenceVectors() {
     int32_t count = 0;
     while(iss >> word) {
       getVector(vec, word);
-      vec.mul(1.0 / vec.norm());
-      svec.addVector(vec);
-      count++;
+      real norm = vec.norm();
+      if (norm > 0) {
+        vec.mul(1.0 / norm);
+        svec.addVector(vec);
+        count++;
+      }
     }
-    svec.mul(1.0 / count);
+    if (count > 0) {
+      svec.mul(1.0 / count);
+    }
     std::cout << sentence << " " << svec << std::endl;
   }
 }
@@ -389,7 +394,7 @@ void FastText::ngramVectors(std::string word) {
   std::vector<int32_t> ngrams;
   std::vector<std::string> substrings;
   Vector vec(args_->dim);
-  dict_->getNgrams(word, ngrams, substrings);
+  dict_->getSubwords(word, ngrams, substrings);
   for (int32_t i = 0; i < ngrams.size(); i++) {
     vec.zero();
     if (ngrams[i] >= 0) {
@@ -430,14 +435,16 @@ void FastText::printSentenceVectors() {
 void FastText::precomputeWordVectors(Matrix& wordVectors) {
   Vector vec(args_->dim);
   wordVectors.zero();
-  std::cout << "Pre-computing word vectors...";
+  std::cerr << "Pre-computing word vectors...";
   for (int32_t i = 0; i < dict_->nwords(); i++) {
     std::string word = dict_->getWord(i);
     getVector(vec, word);
     real norm = vec.norm();
-    wordVectors.addRow(vec, i, 1.0 / norm);
+    if (norm > 0) {
+      wordVectors.addRow(vec, i, 1.0 / norm);
+    }
   }
-  std::cout << " done." << std::endl;
+  std::cerr << " done." << std::endl;
 }
 
 void FastText::findNN(const Matrix& wordVectors, const Vector& queryVec,
@@ -640,6 +647,10 @@ void FastText::train(std::shared_ptr<Args> args) {
       saveOutput();
     }
   }
+}
+
+int FastText::getDimension() const {
+    return args_->dim;
 }
 
 }

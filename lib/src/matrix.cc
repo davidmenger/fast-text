@@ -10,7 +10,6 @@
 #include "matrix.h"
 
 #include <assert.h>
-#include <iostream>
 
 #include <random>
 

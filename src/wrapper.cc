@@ -24,7 +24,7 @@ Wrapper::Wrapper(std::string modelFilename)
         isPrecomputed_(false) {}
 
 void Wrapper::getVector(Vector& vec, const std::string& word) {
-    const std::vector<int32_t>& ngrams = dict_->getNgrams(word);
+    const std::vector<int32_t>& ngrams = dict_->getSubwords(word);
     vec.zero();
     for (auto it = ngrams.begin(); it != ngrams.end(); ++it) {
         vec.addRow(*input_, *it);

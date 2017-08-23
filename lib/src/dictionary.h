@@ -54,10 +54,11 @@ class Dictionary {
 
     int64_t pruneidx_size_ = -1;
     std::unordered_map<int32_t, int32_t> pruneidx_;
-    void addNgrams(
+    void addWordNgrams(
         std::vector<int32_t>& line,
         const std::vector<int32_t>& hashes,
         int32_t n) const;
+
 
    public:
     static const std::string EOS;
@@ -73,13 +74,17 @@ class Dictionary {
     entry_type getType(const std::string&) const;
     bool discard(int32_t, real) const;
     std::string getWord(int32_t) const;
-    const std::vector<int32_t>& getNgrams(int32_t) const;
-    const std::vector<int32_t> getNgrams(const std::string&) const;
-    void getNgrams(const std::string&, std::vector<int32_t>&,
-                   std::vector<std::string>&) const;
-    void computeNgrams(const std::string&, std::vector<int32_t>&) const;
-    void computeNgrams(const std::string&, std::vector<int32_t>&,
-                       std::vector<std::string>&) const;
+    const std::vector<int32_t>& getSubwords(int32_t) const;
+    const std::vector<int32_t> getSubwords(const std::string&) const;
+    void computeSubwords(const std::string&, std::vector<int32_t>&) const;
+    void computeSubwords(
+        const std::string&,
+        std::vector<int32_t>&,
+        std::vector<std::string>&) const;
+    void getSubwords(
+        const std::string&,
+        std::vector<int32_t>&,
+        std::vector<std::string>&) const;
     uint32_t hash(const std::string& str) const;
     void add(const std::string&);
     bool readWord(std::istream&, std::string&) const;
@@ -94,7 +99,6 @@ class Dictionary {
                     std::vector<int32_t>&, std::minstd_rand&) const;
     void threshold(int64_t, int64_t);
     void prune(std::vector<int32_t>&);
-    void convertNgrams(std::vector<int32_t>&);
 };
 
 }
