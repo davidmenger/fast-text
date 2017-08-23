@@ -179,7 +179,7 @@ std::vector<PredictResult> Wrapper::nn(std::string query, int32_t k) {
 
 std::vector<PredictResult> Wrapper::predict (std::string sentence, int32_t k) {
 
-    std::vector<PredictResult> arr();
+    std::vector<PredictResult> arr;
     std::vector<int32_t> words, labels;
     std::istringstream in(sentence);
 
