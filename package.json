@@ -1,6 +1,6 @@
 {
   "name": "fast-text",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Facebook FastText wrapper for Node.js",
   "main": "main.js",
   "scripts": {
