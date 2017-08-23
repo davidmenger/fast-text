@@ -30,6 +30,27 @@ describe('<Classifier>', function () {
         });
     });
 
+    it('should not fall with bad words', function (done) {
+        const model = path.resolve(__dirname, './classification.bin');
+
+        const c = new Classifier(model);
+
+        c.predict('isdoiidsapoisd', 1, (err, res) => {
+            if (err) {
+                done(err);
+                return;
+            }
+            assert.equal(Array.isArray(res), true, 'res should be an array');
+            assert.strictEqual(res.length, 0);
+            res.forEach((v) => {
+                assert.equal(typeof v, 'object');
+                assert.equal(v.label, '__label__helloLabel');
+                assert.equal(typeof v.value, 'number');
+            });
+            done();
+        });
+    });
+
 });
 
 describe('<Query>', function () {

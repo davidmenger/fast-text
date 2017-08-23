@@ -29,7 +29,7 @@ void NnWorker::HandleOKCallback () {
     Nan::HandleScope scope;
     v8::Local<v8::Array> result = Nan::New<v8::Array>(result_.size());
 
-    for(uint32_t i = 0; i < result_.size(); i++) {
+    for(unsigned int i = 0; i < result_.size(); i++) {
         v8::Local<v8::Object> returnObject = Nan::New<v8::Object>();
 
         returnObject->Set(
