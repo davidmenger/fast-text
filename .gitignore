@@ -27,7 +27,7 @@ node_modules
 *.bin
 *.vec
 !test/classification.bin
-!test/query.bin
+# !test/query.bin
 !test/query.vec
 
 # Build folder

@@ -35,7 +35,7 @@ describe('<Classifier>', function () {
 
         const c = new Classifier(model);
 
-        c.predict('isdoiidsapoisd', 1, (err, res) => {
+        c.predict('wtf', 1, (err, res) => {
             if (err) {
                 done(err);
                 return;

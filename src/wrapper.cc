@@ -14,6 +14,10 @@
 #include <queue>
 #include <algorithm>
 
+
+constexpr int32_t FASTTEXT_VERSION = 12; /* Version 1b */
+constexpr int32_t FASTTEXT_FILEFORMAT_MAGIC_INT32 = 793712314;
+
 using fasttext::model_name;
 using fasttext::entry_type;
 
