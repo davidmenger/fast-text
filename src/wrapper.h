@@ -26,7 +26,7 @@ struct PredictResult {
 };
 
 class Wrapper {
-    private:
+    protected:
         std::shared_ptr<Args> args_;
         std::shared_ptr<Dictionary> dict_;
 
@@ -39,8 +39,10 @@ class Wrapper {
         std::shared_ptr<Model> model_;
         Matrix wordVectors_;
 
-        // std::atomic<int64_t> tokenCount;
-        // clock_t start;
+
+        std::atomic<int64_t> tokenCount_;
+        std::atomic<real> loss_;
+        clock_t start_;
 
         void signModel(std::ostream&);
         bool checkModel(std::istream&);
@@ -49,6 +51,16 @@ class Wrapper {
                     const std::set<std::string>&);
 
         void loadModel(std::istream&);
+        void loadVectors(std::string);
+        void trainThread(int32_t);
+
+        void supervised(
+            Model&,
+            real,
+            const std::vector<int32_t>&,
+            const std::vector<int32_t>&);
+        void cbow(Model&, real, const std::vector<int32_t>&);
+        void skipgram(Model&, real, const std::vector<int32_t>&);
 
         bool quant_;
         std::string modelFilename_;
@@ -57,6 +69,8 @@ class Wrapper {
 
         bool isLoaded_;
         bool isPrecomputed_;
+
+        void startThreads();
     public:
         Wrapper(std::string modelFilename);
 
@@ -65,8 +79,14 @@ class Wrapper {
         std::vector<PredictResult> predict(std::string sentence, int32_t k);
         std::vector<PredictResult> nn(std::string query, int32_t k);
 
+        void train(const std::vector<std::string> args);
+
         void precomputeWordVectors();
         void loadModel();
+
+        std::vector<double> getSentenceVector(std::string);
+        void getWordVector(Vector&, const std::string&) const;
+        void addInputVector(Vector&, int32_t) const;
 
 };
 

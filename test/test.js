@@ -55,7 +55,7 @@ describe('<Classifier>', function () {
 
 describe('<Query>', function () {
 
-    this.timeout(10000);
+    this.timeout(100000);
 
     it('should return near neighbors', function (done) {
 
@@ -78,4 +78,54 @@ describe('<Query>', function () {
             done();;
         });
     });
+
+    it('shoud be able to train itself', function (done) {
+        const model = path.resolve(__dirname, './query.bin');
+
+        const c = new Query(model);
+
+        c.getSentenceVector('wozniak hello', (err, res) => {
+            if (err) {
+                done(err);
+                return;
+            }
+            assert.equal(Array.isArray(res), true, 'res should be an array');
+            assert.strictEqual(res.length, 100);
+            res.forEach((v) => {
+                assert.equal(typeof v, 'number');
+            })
+            done();
+        });
+    });
+
+    it('shoud be able to train itself', function (done) {
+        const input = path.resolve(__dirname, './texts.txt');
+        const output = path.resolve(__dirname, './texts-out.txt');
+
+        const c = new Query(input);
+
+        c.train({
+            dim: 100,
+            output,
+            input
+        }, (err) => {
+            if (err) {
+                done(err);
+                return;
+            }
+            c.getSentenceVector('is frog brown', (err, res) => {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                assert.equal(Array.isArray(res), true, 'res should be an array');
+                assert.strictEqual(res.length, 100);
+                res.forEach((v) => {
+                    assert.equal(typeof v, 'number');
+                })
+                done();
+            });
+        });
+    });
+
 });

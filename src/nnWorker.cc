@@ -10,6 +10,10 @@ void NnWorker::Execute () {
         result_ = wrapper_->nn(query_, k_);
     } catch (std::string errorMessage) {
         SetErrorMessage(errorMessage.c_str());
+    } catch (const char * str) {
+        SetErrorMessage(str);
+    } catch(const std::exception& e) {
+        SetErrorMessage(e.what());
     }
 }
 

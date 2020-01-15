@@ -4,6 +4,8 @@
 
 #include <node.h>
 #include <node_object_wrap.h>
+#include <nan.h>
+
 #include "wrapper.h"
 #include "classifierWorker.h"
 
@@ -35,7 +37,8 @@ class Classifier : public Nan::ObjectWrap {
                     return;
                 }
 
-                v8::String::Utf8Value commandArg(info[0]->ToString());
+                // v8::String::Utf8Value commandArg(info[0]->ToString());
+                Nan::Utf8String commandArg(info[0]);
                 std::string command = std::string(*commandArg);
 
                 Classifier *obj = new Classifier(command);
@@ -66,8 +69,10 @@ class Classifier : public Nan::ObjectWrap {
                 return;
             }
 
-            int32_t k = info[1]->Uint32Value();
-            v8::String::Utf8Value sentenceArg(info[0]->ToString());
+            // int32_t k = info[1]->ToLocalChecked()->Uint32Value();
+            int32_t k = info[1]->Int32Value(Nan::GetCurrentContext()).FromJust();
+            // v8::String::Utf8Value sentenceArg(info[0]->ToString());
+            Nan::Utf8String sentenceArg(info[0]);
             std::string sentence = std::string(*sentenceArg);
             Nan::Callback *callback = new Nan::Callback(info[2].As<v8::Function>());
 

@@ -22,23 +22,36 @@
                 "lib/src/utils.h",
                 "lib/src/vector.cc",
                 "lib/src/vector.h",
+                "src/nodeArgument.cc",
+                "src/nodeArgument.h",
                 "src/classifier.h",
                 "src/classifierWorker.cc",
                 "src/query.h",
+                "src/trainWorker.cc",
+                "src/trainWorker.h",
+                "src/vectorWorker.cc",
+                "src/vectorWorker.h",
                 "src/nnWorker.cc",
+                "src/nnWorker.h",
                 "src/wrapper.cc",
+                "src/wrapper.h",
                 "src/fasttext.cc"
             ],
             "include_dirs": ["<!(node -e \"require('nan')\")"],
             "cflags": [
                 "-std=c++11",
                 "-pthread",
-                "-Wsign-compare",
+                "-Wno-sign-compare",
                 "-fexceptions",
                 "-O0"
             ],
             "conditions": [
-                [ 'OS!="win"', {
+                [ "OS=='linux'", {
+                    "cflags+": [ "-std=c++11", "-fexceptions" ],
+                    "cflags_c+": [ "-std=c++11", "-fexceptions" ],
+                    "cflags_cc+": [ "-std=c++11", "-fexceptions" ],
+                }],
+                [ "OS=='freebsd'", {
                     "cflags+": [ "-std=c++11", "-fexceptions" ],
                     "cflags_c+": [ "-std=c++11", "-fexceptions" ],
                     "cflags_cc+": [ "-std=c++11", "-fexceptions" ],
@@ -53,6 +66,29 @@
                         "CLANG_CXX_LANGUAGE_STANDARD":"c++11",
                         "CLANG_CXX_LIBRARY": "libc++"
                     },
+                }],
+                [
+                    "OS=='win'", {
+                        "cflags": [
+                        "-Wall"
+                        ],
+                        "defines": [
+                        "WIN"
+                        ],
+                        "msvs_settings": {
+                        "VCCLCompilerTool": {
+                            "ExceptionHandling": "2",
+                            "DisableSpecificWarnings": [
+                            "4244"
+                            ],
+                        },
+                        "VCLinkerTool": {
+                            "LinkTimeCodeGeneration": 1,
+                            "OptimizeReferences": 2,
+                            "EnableCOMDATFolding": 2,
+                            "LinkIncremental": 1,
+                        }
+                    }
                 }]
             ]
         }
