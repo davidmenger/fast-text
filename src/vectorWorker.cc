@@ -33,10 +33,12 @@ void VectorWorker::HandleErrorCallback () {
 
 void VectorWorker::HandleOKCallback () {
     Nan::HandleScope scope;
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::Local<v8::Context> context =isolate->GetCurrentContext();
     v8::Local<v8::Array> result = Nan::New<v8::Array>(result_.size());
 
     for(unsigned int i = 0; i < result_.size(); i++) {
-        result->Set(i, Nan::New<v8::Number>(result_[i]));
+        result->Set(context, i, Nan::New<v8::Number>(result_[i]));
     }
 
     v8::Local<v8::Value> argv[] = {

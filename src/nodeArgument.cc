@@ -96,7 +96,7 @@ namespace NodeArgument
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::HandleScope scope(isolate);
 
-    v8::Local<v8::Context> context = v8::Context::New(isolate);
+    v8::Local<v8::Context> context = isolate->GetCurrentContext();
     v8::MaybeLocal<v8::Array> maybe_props = obj->GetOwnPropertyNames(context);
 
     char** arguments = NULL;
@@ -118,7 +118,7 @@ namespace NodeArgument
       };
 
       for (uint32_t i = 0; i < indexLen; ++i) {
-        v8::Local<v8::Value> key = props->Get(i);
+        v8::Local<v8::Value> key = props->Get(context, i).ToLocalChecked();
         // const v8::String::Utf8Value utf8_key(key);
         Nan::Utf8String utf8_key(key);
 
@@ -133,7 +133,7 @@ namespace NodeArgument
           throw "Unknown argument: " + keyValue;
         }
 
-        v8::Local<v8::Value> value = obj->Get(v8::String::NewFromUtf8(isolate, theKey));
+        v8::Local<v8::Value> value = obj->Get(context, v8::String::NewFromUtf8(isolate, theKey).ToLocalChecked()).ToLocalChecked();
         NodeArgument::AddStringArgument(&arguments, &count, NodeArgument::concat("-", theKey));
 
         if (!value->IsBoolean())
@@ -160,8 +160,8 @@ namespace NodeArgument
 
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::HandleScope scope(isolate);
+    v8::Local<v8::Context> context =isolate->GetCurrentContext();
 
-    v8::Local<v8::Context> context = v8::Context::New(isolate);
     v8::MaybeLocal<v8::Array> maybe_props = obj->GetOwnPropertyNames(context);
     v8::Local<v8::Array> props = maybe_props.ToLocalChecked();
 
@@ -169,14 +169,14 @@ namespace NodeArgument
     std::vector<std::string> v; // initialize
 
     for (uint32_t i = 0; i < indexLen; ++i) {
-      v8::Local<v8::Value> key = props->Get(i);
+      v8::Local<v8::Value> key = props->Get(context, i).ToLocalChecked();
       // const v8::String::Utf8Value utf8_key(key);
       Nan::Utf8String utf8_key(key);
 
       std::string keyValue = std::string(*utf8_key);
       char *theKey = (char *)keyValue.c_str();
 
-      v8::Local<v8::Value> value = obj->Get(v8::String::NewFromUtf8(isolate, theKey));
+      v8::Local<v8::Value> value = obj->Get(context, v8::String::NewFromUtf8(isolate, theKey).ToLocalChecked()).ToLocalChecked();
       // v8::String::Utf8Value utf8_value(value->ToString());
       Nan::Utf8String utf8_value(value);
 
@@ -193,6 +193,7 @@ namespace NodeArgument
 
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::Local<v8::Object> result = v8::Object::New(isolate);
+    v8::Local<v8::Context> context =isolate->GetCurrentContext();
 
     for(auto const& iterator : obj) {
       v8::Local<v8::Value> value ;
@@ -200,10 +201,12 @@ namespace NodeArgument
       if(isOnlyDouble(iterator.second.c_str())) {
         value = v8::Number::New(isolate, atof(iterator.second.c_str()));
       } else {
-        value = v8::String::NewFromUtf8(isolate, iterator.second.c_str());
+        value = v8::String::NewFromUtf8(isolate, iterator.second.c_str()).ToLocalChecked();
       }
+      v8::MaybeLocal<v8::String> key = v8::String::NewFromUtf8(isolate, iterator.first.c_str());
       result->Set(
-        v8::String::NewFromUtf8(isolate, iterator.first.c_str()),
+        context,
+        key.ToLocalChecked(),
         value
       );
     }
