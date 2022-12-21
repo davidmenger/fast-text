@@ -1,3 +1,5 @@
+.DS_Store
+
 public/assets/dist
 public/assets/*.js
 public/assets/*.js.gz

@@ -9,8 +9,8 @@ const { Classifier, Query } = require('../main');
 
 describe('<Classifier>', function () {
 
-    it('should clasify the model', function (done) {
-        const model = path.resolve(__dirname, './classification.bin');
+    it.only('should clasify the model', function (done) {
+        const model = path.resolve(__dirname, './x.bin');
 
         const c = new Classifier(model);
 
@@ -79,7 +79,7 @@ describe('<Query>', function () {
         });
     });
 
-    it('shoud be able to train itself', function (done) {
+    it('#getSentenceVector()', function (done) {
         const model = path.resolve(__dirname, './query.bin');
 
         const c = new Query(model);
@@ -90,7 +90,7 @@ describe('<Query>', function () {
                 return;
             }
             assert.equal(Array.isArray(res), true, 'res should be an array');
-            assert.strictEqual(res.length, 100);
+            assert.strictEqual(res.length, 200);
             res.forEach((v) => {
                 assert.equal(typeof v, 'number');
             })
@@ -98,7 +98,7 @@ describe('<Query>', function () {
         });
     });
 
-    it('shoud be able to train itself', function (done) {
+    it('#train()', function (done) {
         const input = path.resolve(__dirname, './texts.txt');
         const output = path.resolve(__dirname, './texts-out.txt');
 

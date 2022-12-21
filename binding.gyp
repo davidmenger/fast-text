@@ -39,28 +39,31 @@
             ],
             "include_dirs": ["<!(node -e \"require('nan')\")"],
             "cflags": [
-                "-std=c++11",
+                "-std=c++14",
                 "-pthread",
-                "-Wno-sign-compare",
                 "-fexceptions",
-                "-O0"
+                "-O3",
+                "-Wsign-compare",
+                "-Wall",
+                "-march=native",
+                "-frtti"
             ],
             "conditions": [
                 [ "OS=='linux'", {
-                    "cflags+": [ "-std=c++11", "-fexceptions" ],
-                    "cflags_c+": [ "-std=c++11", "-fexceptions" ],
-                    "cflags_cc+": [ "-std=c++11", "-fexceptions" ],
+                    "cflags+": [ "-std=c++14", "-fexceptions", "-Wall", "-Wsign-compare", "-frtti" ],
+                    "cflags_c+": [ "-std=c++14", "-fexceptions", "-Wall", "-Wsign-compare", "-frtti"],
+                    "cflags_cc+": [ "-std=c++14", "-fexceptions", "-Wall", "-Wsign-compare", "-frtti" ],
                 }],
                 [ "OS=='freebsd'", {
-                    "cflags+": [ "-std=c++11", "-fexceptions" ],
-                    "cflags_c+": [ "-std=c++11", "-fexceptions" ],
-                    "cflags_cc+": [ "-std=c++11", "-fexceptions" ],
+                    "cflags+": [ "-std=c++17", "-fexceptions", "-Wall", "-Wsign-compare", "-frtti" ],
+                    "cflags_c+": [ "-std=c++17", "-fexceptions", "-Wall", "-Wsign-compare", "-frtti" ],
+                    "cflags_cc+": [ "-std=c++17", "-fexceptions", "-Wall", "-Wsign-compare", "-frtti" ],
                 }],
                 [ 'OS=="mac"', {
-                    "cflags+": [ "-stdlib=libc++" ],
+                    "cflags+": [ "-stdlib=libc++", "-Wsign-compare", "-frtti" ],
                     "xcode_settings": {
-                        "OTHER_CPLUSPLUSFLAGS" : [ "-std=c++17", "-stdlib=libc++", "-pthread" ],
-                        "OTHER_LDFLAGS": [ "-stdlib=libc++" ],
+                        "OTHER_CPLUSPLUSFLAGS" : [ "-std=c++14", "-stdlib=libc++", "-pthread", "-Wsign-compare", "-frtti" ],
+                        "OTHER_LDFLAGS": [ "-stdlib=libc++", "-frtti" ],
                         "MACOSX_DEPLOYMENT_TARGET": "10.11",
                         "GCC_ENABLE_CPP_EXCEPTIONS": "YES",
                         "CLANG_CXX_LIBRARY": "libc++"
