@@ -9,8 +9,8 @@ const { Classifier, Query } = require('../main');
 
 describe('<Classifier>', function () {
 
-    it.only('should clasify the model', function (done) {
-        const model = path.resolve(__dirname, './x.bin');
+    it('should clasify the model', function (done) {
+        const model = path.resolve(__dirname, './query.bin');
 
         const c = new Classifier(model);
 
